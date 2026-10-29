@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Gestação (Faltantes)</title>
+<style>
+  :root{
+    --navy:#1B2A56; --navy-2:#24376e; --gold:#C9A227; --ice:#E7ECF7;
+    --ink:#1a2238; --muted:#5b6785; --ok:#1f8a4c; --ok-bg:#e3f4ea;
+    --bad:#c0392b; --bad-bg:#fbe7e4; --white:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Calibri,"Segoe UI",Arial,sans-serif;background:var(--ice);color:var(--ink);min-height:100vh;display:flex;justify-content:center;padding:24px 16px}
+  .wrap{width:100%;max-width:640px}
+  .card{background:var(--white);border-radius:16px;box-shadow:0 8px 28px rgba(27,42,86,.12);overflow:hidden}
+  .head{background:var(--navy);color:#fff;padding:26px 24px 22px;border-bottom:4px solid var(--gold)}
+  .badge{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);background:var(--gold);padding:4px 10px;border-radius:999px;font-weight:700}
+  h1{font-family:Cambria,Georgia,serif;font-size:24px;line-height:1.25;margin:12px 0 6px}
+  .head p{opacity:.85;font-size:14px}
+  .body{padding:24px}
+  label{display:block;font-weight:700;margin-bottom:8px}
+  input[type=text]{width:100%;padding:13px 14px;border:2px solid #cfd7ea;border-radius:10px;font-size:16px;font-family:inherit}
+  input[type=text]:focus{outline:none;border-color:var(--navy)}
+  .btn{display:block;width:100%;margin-top:16px;padding:14px;border:0;border-radius:10px;background:var(--navy);color:#fff;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn:hover{background:var(--navy-2)}
+  .btn:disabled{background:#a9b3cc;cursor:not-allowed}
+  .rules{margin-top:20px;background:var(--ice);border-left:4px solid var(--gold);border-radius:8px;padding:14px 16px;font-size:14px;color:var(--muted);line-height:1.55}
+  .rules b{color:var(--ink)}
+  .err{color:var(--bad);font-size:14px;margin-top:8px;min-height:18px}
+  .hidden{display:none!important}
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:14px;color:var(--muted);font-weight:700}
+  .timer{font-size:20px;color:var(--navy);font-variant-numeric:tabular-nums}
+  .timer.low{color:var(--bad)}
+  .bar{height:8px;background:#e1e6f2;border-radius:99px;overflow:hidden;margin-bottom:6px}
+  .bar>div{height:100%;background:var(--gold);transition:width 1s linear}
+  .prog{height:4px;background:#e1e6f2;border-radius:99px;overflow:hidden;margin-bottom:22px}
+  .prog>div{height:100%;background:var(--navy)}
+  .q{font-family:Cambria,Georgia,serif;font-size:20px;line-height:1.45;margin-bottom:22px}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .opt{padding:18px 10px;border:2px solid #cfd7ea;border-radius:12px;background:#fff;font-size:18px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--ink)}
+  .opt:hover{border-color:var(--navy)}
+  .opt.sel{background:var(--navy);border-color:var(--navy);color:#fff}
+  .hint{font-size:13px;color:var(--muted);text-align:center;margin-top:12px}
+  .score{text-align:center;padding:6px 0 18px}
+  .nota{font-family:Cambria,Georgia,serif;font-size:52px;color:var(--navy);font-weight:700;line-height:1}
+  .nota small{font-size:22px;color:var(--muted)}
+  .stats{display:flex;gap:12px;margin:18px 0}
+  .stat{flex:1;border-radius:12px;padding:14px;text-align:center;font-weight:700}
+  .stat .n{font-size:28px;display:block}
+  .stat.ok{background:var(--ok-bg);color:var(--ok)}
+  .stat.bad{background:var(--bad-bg);color:var(--bad)}
+  .status{text-align:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+  .rev h3{font-family:Cambria,Georgia,serif;color:var(--navy);margin:8px 0 12px}
+  .item{border-radius:10px;padding:12px 14px;margin-bottom:10px;border-left:5px solid;font-size:15px;line-height:1.45}
+  .item.ok{background:var(--ok-bg);border-color:var(--ok)}
+  .item.bad{background:var(--bad-bg);border-color:var(--bad)}
+  .item .meta{font-size:13px;margin-top:6px;color:var(--muted)}
+  .item .exp{font-size:13px;margin-top:4px;color:var(--ink)}
+  .foot{text-align:center;font-size:12px;color:var(--muted);margin-top:14px}
+  @media (max-width:420px){h1{font-size:21px}.q{font-size:18px}.body{padding:20px 16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="card">
+  <div class="head">
+    <span class="badge">Reprodução Animal</span>
+    <h1>Fecundação, Gestação, Parto e Lactação — Avaliação Faltantes</h1>
+    <p>Quiz Verdadeiro ou Falso · Prof. Alírio · Valor: 4,0 pontos</p>
+  </div>
+
+  <!-- TELA INICIAL -->
+  <div class="body" id="tela-inicio">
+    <label for="nome">Nome completo</label>
+    <input type="text" id="nome" placeholder="Digite seu nome completo" autocomplete="name">
+    <div class="err" id="erro-nome"></div>
+    <button class="btn" id="btn-iniciar">Iniciar Quiz</button>
+    <div class="rules">
+      <b>25 questões</b> de Verdadeiro ou Falso · <b>40 segundos</b> por questão.<br>
+      Você pode trocar a resposta enquanto estiver na questão. Ao clicar em <b>Avançar</b>, não é possível voltar.<br>
+      Se o tempo acabar, a questão avança sozinha (sem resposta conta como erro).<br>
+      O resultado só aparece ao final. Cada acerto vale <b>0,16 ponto</b>.
+    </div>
+  </div>
+
+  <!-- TELA QUIZ -->
+  <div class="body hidden" id="tela-quiz">
+    <div class="top"><span id="contador">Questão 1 de 25</span><span class="timer" id="timer">40s</span></div>
+    <div class="bar"><div id="barra-tempo" style="width:100%"></div></div>
+    <div class="prog"><div id="barra-prog" style="width:0%"></div></div>
+    <div class="q" id="pergunta"></div>
+    <div class="opts">
+      <button class="opt" data-v="true">Verdadeiro</button>
+      <button class="opt" data-v="false">Falso</button>
+    </div>
+    <button class="btn" id="btn-avancar" disabled>Avançar</button>
+    <div class="hint">Atenção: depois de avançar, não há como voltar.</div>
+  </div>
+
+  <!-- TELA RESULTADO -->
+  <div class="body hidden" id="tela-final">
+    <div class="score">
+      <div style="font-size:14px;color:var(--muted);margin-bottom:8px" id="final-nome"></div>
+      <div class="nota" id="final-nota">0,00 <small>/ 4,0</small></div>
+    </div>
+    <div class="stats">
+      <div class="stat ok"><span class="n" id="final-acertos">0</span>Acertos</div>
+      <div class="stat bad"><span class="n" id="final-erros">0</span>Erros</div>
+    </div>
+    <div class="status" id="status-envio">Enviando resultado…</div>
+    <div class="rev">
+      <h3>Correção</h3>
+      <div id="revisao"></div>
+    </div>
+  </div>
+</div>
+<div class="foot">Fontes: Hafez — Reprodução Animal (7ª ed.) · Cunningham — Tratado de Fisiologia Veterinária</div>
+</div>
+
+<script>
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby-ZUVzsaC3cUYiRcD5cjjAEzG1t_Oy9rPo761W7RYTeglCgOXUriLmzFbI81qafsLV/exec';
+const ABA_SHEETS = 'Quiz Gestação Faltantes';
+const TEMPO = 40;
+const VALOR_TOTAL = 4.0;
+
+const perguntas = [
+  { q:"A reação de zona, consequência da exocitose dos grânulos corticais, modifica as glicoproteínas ZP2 e ZP3, impedindo a ligação e a penetração de novos espermatozoides.", c:true,
+    e:"Enzimas dos grânulos corticais alteram a zona pelúcida, constituindo o principal bloqueio à polispermia." },
+  { q:"Na égua, oócitos não fecundados ficam retidos na tuba uterina, enquanto o embrião chega ao útero por volta do 6º dia graças à PGE2 que ele próprio secreta.", c:true,
+    e:"O embrião equino secreta PGE2, que relaxa a musculatura do istmo e permite o transporte seletivo." },
+  { q:"Na maioria das espécies domésticas, o oócito completa a segunda divisão meiótica antes da ovulação e é liberado como óvulo haploide maduro.", c:false,
+    e:"A meiose II fica parada em metáfase II e só se completa após a penetração do espermatozoide." },
+  { q:"Em bovinos, a ativação do genoma embrionário ocorre já na primeira clivagem, no estágio de 2 células.", c:false,
+    e:"Em bovinos ocorre no estágio de 8 a 16 células; antes disso, o desenvolvimento depende de RNAm materno." },
+  { q:"Em ovinos, o reconhecimento materno da gestação depende do estrógeno do concepto, que desvia a secreção de PGF2α para o lúmen uterino.", c:false,
+    e:"Esse mecanismo é o da porca. Em ovinos e bovinos, o sinal é o interferon-tau." },
+  { q:"O interferon-tau atua inibindo a expressão dos receptores endometriais de ocitocina, impedindo a liberação pulsátil de PGF2α.", c:true,
+    e:"Sem receptores de ocitocina, o endométrio não gera os pulsos luteolíticos de PGF2α." },
+  { q:"Na égua, a intensa mobilidade do embrião pelo lúmen uterino, entre os dias 6 e 16, é necessária para o reconhecimento materno da gestação.", c:true,
+    e:"A migração transuterina permite que o concepto sinalize em todo o endométrio e bloqueie a luteólise." },
+  { q:"A fixação do concepto equino ocorre por volta do 30º dia de gestação, coincidindo com a formação dos cálices endometriais.", c:false,
+    e:"A fixação ocorre por volta do 16º dia; os cálices se formam por volta dos dias 36 a 40." },
+  { q:"A eCG atinge pico entre os dias 55 e 70 de gestação, e os cálices endometriais são destruídos por reação imune materna entre 100 e 150 dias.", c:true,
+    e:"As células dos cálices são de origem fetal e são rejeitadas por infiltração linfocitária materna." },
+  { q:"Na ovelha, a placenta assume a produção de progesterona por volta do 50º dia, de modo que a ovariectomia após esse período não interrompe a gestação.", c:true,
+    e:"Na ovelha, a progesterona placentária é suficiente após cerca de 50 dias." },
+  { q:"A coelha possui útero duplo, com dois cornos totalmente separados, mas apenas uma cérvix.", c:false,
+    e:"No útero duplo há duas cérvices, cada uma se abrindo independentemente na vagina." },
+  { q:"A égua apresenta corpo uterino bem desenvolvido em relação aos cornos, ao contrário da porca, cujos cornos são longos e o corpo é curto.", c:true,
+    e:"Na égua, o corpo uterino é amplo; na porca, os cornos longos e tortuosos alojam a leitegada." },
+  { q:"Nos ruminantes, células binucleadas do trofoblasto migram e se fundem ao epitélio uterino, formando sincícios que secretam lactogênio placentário.", c:true,
+    e:"Por isso a placenta dos ruminantes é chamada de sinepiteliocorial." },
+  { q:"A placenta hemocorial, típica de roedores e primatas, apresenta o maior número de camadas entre o sangue materno e o fetal.", c:false,
+    e:"É o tipo com menos camadas: o córion fica em contato direto com o sangue materno." },
+  { q:"Na placenta da cadela, o hematoma marginal apresenta coloração esverdeada devido à uteroverdina, um pigmento derivado da degradação da hemoglobina.", c:true,
+    e:"A uteroverdina explica a secreção vulvar verde observada durante o parto da cadela." },
+  { q:"Na égua, os microcotilédones são as unidades de troca materno-fetal da placenta difusa.", c:true,
+    e:"Os microcotilédones se distribuem por quase toda a superfície do corioalantoide." },
+  { q:"O alantoide origina-se do intestino posterior primitivo e, ao fundir-se ao córion, forma o corioalantoide, a porção vascularizada da placenta definitiva.", c:true,
+    e:"Os vasos alantoideanos formam a circulação umbilical." },
+  { q:"Em carnívoros e equinos, o saco vitelínico é a principal via de nutrição fetal durante toda a gestação.", c:false,
+    e:"A placenta vitelínica é transitória; logo é substituída pela placenta corioalantoideana." },
+  { q:"O hipomane, encontrado no líquido alantoideano da égua, é uma estrutura de origem fetal com função endócrina essencial à manutenção da gestação.", c:false,
+    e:"O hipomane é uma concreção de sais e restos celulares, sem função endócrina conhecida." },
+  { q:"O amolecimento da cérvix antes do parto é favorecido pela relaxina e pela PGE2, que promovem remodelação do colágeno cervical.", c:true,
+    e:"Esses fatores reduzem a organização do colágeno e aumentam a distensibilidade cervical." },
+  { q:"Na vaca, a expulsão das membranas fetais só é considerada retenção de placenta quando ultrapassa 72 horas após o parto.", c:false,
+    e:"Na vaca, considera-se retenção quando a placenta não é eliminada em até cerca de 12 horas." },
+  { q:"A lactogênese estágio II coincide com a queda da progesterona perto do parto, que remove a inibição sobre a síntese abundante de leite.", c:true,
+    e:"A progesterona inibe a lactogênese; com sua queda, a prolactina e os glicocorticoides atuam plenamente." },
+  { q:"A adrenalina liberada em situações de estresse potencializa a ejeção do leite ao aumentar o fluxo sanguíneo mamário.", c:false,
+    e:"A adrenalina inibe a ejeção: causa vasoconstrição e reduz o acesso da ocitocina às células mioepiteliais." },
+  { q:"A absorção intestinal de imunoglobulinas por pinocitose persiste até cerca de 7 dias de vida em bezerros e potros.", c:false,
+    e:"O fechamento intestinal ocorre em cerca de 24 horas; a absorção é máxima nas primeiras 6 a 12 horas." },
+  { q:"Em bovinos, gestações gemelares tendem a ter duração maior do que as gestações de feto único.", c:false,
+    e:"Gestações gemelares tendem a ser mais curtas; fetos machos é que prolongam levemente a gestação." }
+];
+
+let ordem = [], idx = 0, respostas = [], selecionada = null, restante = TEMPO, intervalo = null, nomeAluno = '';
+const $ = id => document.getElementById(id);
+const fmt = n => n.toFixed(2).replace('.', ',');
+
+function chaveBloqueio(nome){ return 'quizGestacaoFaltantes_' + nome.toLowerCase().replace(/\s+/g,' ').trim(); }
+function lerLS(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function gravarLS(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+
+$('btn-iniciar').addEventListener('click', () => {
+  const nome = $('nome').value.trim().replace(/\s+/g,' ');
+  if (nome.split(' ').length < 2) { $('erro-nome').textContent = 'Digite seu nome completo (nome e sobrenome).'; return; }
+  if (lerLS(chaveBloqueio(nome))) { $('erro-nome').textContent = 'Este quiz já foi realizado com este nome neste dispositivo.'; return; }
+  nomeAluno = nome;
+  ordem = perguntas.map((_, i) => i).sort(() => Math.random() - 0.5);
+  $('tela-inicio').classList.add('hidden');
+  $('tela-quiz').classList.remove('hidden');
+  mostrar();
+});
+
+document.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.opt').forEach(x => x.classList.remove('sel'));
+  b.classList.add('sel');
+  selecionada = b.dataset.v === 'true';
+  $('btn-avancar').disabled = false;
+}));
+
+$('btn-avancar').addEventListener('click', avancar);
+
+function mostrar(){
+  const p = perguntas[ordem[idx]];
+  selecionada = null;
+  document.querySelectorAll('.opt').forEach(x => x.classList.remove('sel'));
+  $('btn-avancar').disabled = true;
+  $('btn-avancar').textContent = idx === perguntas.length - 1 ? 'Concluir' : 'Avançar';
+  $('contador').textContent = `Questão ${idx + 1} de ${perguntas.length}`;
+  $('barra-prog').style.width = (idx / perguntas.length * 100) + '%';
+  $('pergunta').textContent = p.q;
+  restante = TEMPO; atualizarTempo();
+  clearInterval(intervalo);
+  intervalo = setInterval(() => { restante--; atualizarTempo(); if (restante <= 0) avancar(); }, 1000);
+}
+
+function atualizarTempo(){
+  $('timer').textContent = restante + 's';
+  $('timer').classList.toggle('low', restante <= 10);
+  $('barra-tempo').style.width = (restante / TEMPO * 100) + '%';
+}
+
+function avancar(){
+  clearInterval(intervalo);
+  respostas[idx] = selecionada;
+  idx++;
+  if (idx < perguntas.length) mostrar(); else finalizar();
+}
+
+function finalizar(){
+  let acertos = 0;
+  const rev = ordem.map((pi, i) => {
+    const p = perguntas[pi], r = respostas[i], ok = r === p.c;
+    if (ok) acertos++;
+    const txt = v => v === null || v === undefined ? 'Sem resposta' : (v ? 'Verdadeiro' : 'Falso');
+    return `<div class="item ${ok ? 'ok' : 'bad'}"><b>${i + 1}.</b> ${p.q}
+      <div class="meta">Sua resposta: <b>${txt(r)}</b> · Gabarito: <b>${txt(p.c)}</b></div>
+      <div class="exp">${p.e}</div></div>`;
+  }).join('');
+  const erros = perguntas.length - acertos;
+  const nota = acertos * (VALOR_TOTAL / perguntas.length);
+  gravarLS(chaveBloqueio(nomeAluno), '1');
+
+  $('tela-quiz').classList.add('hidden');
+  $('tela-final').classList.remove('hidden');
+  $('final-nome').textContent = nomeAluno;
+  $('final-nota').innerHTML = `${fmt(nota)} <small>/ 4,0</small>`;
+  $('final-acertos').textContent = acertos;
+  $('final-erros').textContent = erros;
+  $('revisao').innerHTML = rev;
+  window.scrollTo(0, 0);
+
+  const agora = new Date();
+  const payload = {
+    aba: ABA_SHEETS,
+    nome: nomeAluno, acertos, erros,
+    nota: fmt(nota),
+    data: agora.toLocaleDateString('pt-BR'),
+    hora: agora.toLocaleTimeString('pt-BR')
+  };
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  }).then(() => { $('status-envio').textContent = 'Resultado enviado ao professor.'; })
+    .catch(() => { $('status-envio').textContent = 'Não foi possível enviar o resultado. Mostre esta tela ao professor.'; });
+}
+
+window.addEventListener('beforeunload', e => {
+  if (!$('tela-quiz').classList.contains('hidden')) { e.preventDefault(); e.returnValue = ''; }
+});
+</script>
+</body>
+</html>
